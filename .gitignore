@@ -1,0 +1,6 @@
+# The raw judge results (55 MB) stay on this machine; the site ships the gzipped copy (see README).
+/assets/*.jsonl
+
+.claude/
+.DS_Store
+._*

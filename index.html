@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Judge Validation</title>
+  <meta name="description" content="Review a random sample of LLM-judge verdicts on edit-graph prompt variants and export your own verdicts as JSONL.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="topbar-row">
+        <div class="brand">
+          <h1>Judge validation</h1>
+          <span class="src" id="src-info"></span>
+        </div>
+        <div class="progress" aria-live="polite">
+          <span id="progress-text">0 / 0 complete</span>
+          <button type="button" class="btn btn-link" id="btn-next-incomplete">Next incomplete</button>
+        </div>
+        <div class="actions">
+          <label class="switch" title="Keep each judge verdict hidden until you have chosen your own, to avoid anchoring on it.">
+            <input type="checkbox" id="blind-toggle">
+            <span class="switch-track" aria-hidden="true"></span>
+            <span>Hide judge until I answer</span>
+          </label>
+          <button type="button" class="btn btn-quiet" id="btn-open" title="Load a different JSONL file, or a results file you downloaded earlier to keep working on it">Open file…</button>
+          <span class="sampling" id="sampling-wrap">
+            <label for="sampling-select">Sample</label>
+            <select id="sampling-select">
+              <option value="random">Random</option>
+              <option value="stratified">Stratified</option>
+            </select>
+            <button type="button" class="btn btn-quiet btn-icon" id="btn-sample-info" aria-label="Sample details" title="Sample details">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.3v3.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="4.95" r="0.95" fill="currentColor"/></svg>
+            </button>
+          </span>
+          <button type="button" class="btn" id="btn-new" title="Draw a different sample (your current work stays saved under its seed)">New sample</button>
+          <button type="button" class="btn btn-primary" id="btn-download">Download results</button>
+        </div>
+      </div>
+      <nav class="strip" id="strip" aria-label="Jump to example"></nav>
+    </header>
+
+    <div class="exbar">
+      <button type="button" class="btn" id="btn-prev" aria-label="Previous example">← Prev</button>
+      <div class="ex-title">
+        <strong>Example <span id="ex-pos">–</span></strong>
+        <span class="ex-meta" id="ex-meta"></span>
+      </div>
+      <button type="button" class="btn" id="btn-next" aria-label="Next example">Next →</button>
+    </div>
+
+    <div class="cols">
+      <div class="main" id="main">
+        <section class="pane" id="pane-graph" aria-labelledby="h-graph">
+          <h2 class="section-title" id="h-graph">Edit graph</h2>
+          <div class="card graph-card">
+            <div id="graph"></div>
+            <details class="raw">
+              <summary>Raw <code>graph_description</code></summary>
+              <pre id="graph-raw"></pre>
+            </details>
+          </div>
+        </section>
+        <section class="pane" id="pane-text" aria-labelledby="h-caption">
+          <h2 class="section-title" id="h-caption">Caption</h2>
+          <div class="card"><p class="caption" id="caption"></p></div>
+          <h2 class="section-title" id="h-prompts">Prompt variants</h2>
+          <ol class="prompts" id="prompts" aria-labelledby="h-prompts"></ol>
+        </section>
+      </div>
+
+      <aside class="review" id="review" aria-labelledby="h-verdicts">
+        <h2 class="section-title" id="h-verdicts">Verdicts</h2>
+        <div id="criteria"></div>
+        <div class="review-foot">
+          <button type="button" class="btn" id="btn-prev-2">← Prev</button>
+          <button type="button" class="btn btn-primary" id="btn-next-2">Next →</button>
+        </div>
+        <p class="save-status" id="save-status"></p>
+      </aside>
+    </div>
+  </div>
+
+  <div class="overlay" id="loader">
+    <div class="load-card">
+      <h2 id="load-title">Loading…</h2>
+      <div id="load-progress">
+        <div class="load-bar"><div id="load-fill"></div></div>
+        <p class="load-detail" id="load-detail"></p>
+      </div>
+      <div id="picker" hidden>
+        <p class="picker-reason" id="picker-reason"></p>
+        <label class="drop" id="drop" for="file-input">
+          <strong>Choose a JSONL file</strong>
+          <span>or drop it here</span>
+        </label>
+        <div class="picker-actions">
+          <button type="button" class="btn btn-quiet" id="btn-cancel-picker" hidden>Back to current sample</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="dialog" id="sample-dialog" aria-labelledby="sample-dialog-title">
+    <div class="dialog-head">
+      <h2 id="sample-dialog-title">Sample details</h2>
+      <form method="dialog">
+        <button class="btn btn-quiet btn-icon" aria-label="Close">
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+    </div>
+    <div class="dialog-body" id="sample-dialog-body"></div>
+  </dialog>
+
+  <input type="file" id="file-input" accept=".jsonl,.ndjson,.json,.txt,.gz" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/dom.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
