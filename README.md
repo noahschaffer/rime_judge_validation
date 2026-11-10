@@ -51,6 +51,24 @@ Rows from a stratified sample also get `sample_stratum` (the judge's verdict com
 ÷ rows drawn from it). Weight by `sample_weight` to estimate rates for the whole file; unweighted
 counts overstate the rare combinations.
 
+## Comparing results with the judge
+
+`compare_results.py` counts where a reviewer disagreed with the judge in a downloaded results file
+(Python 3, standard library only):
+
+```bash
+python3 compare_results.py musiccaps_prompt_report.validated.seed-k3x9q2.2026-11-10.jsonl
+```
+
+It reports the disagreements in total (each example has one verdict pair per criterion, so 100
+examples give 300 pairs), per criterion, and per criterion and judge verdict, next to how the reviewer
+split pass/fail. The judge's `appropriate` and `inappropriate` count as pass and fail. Its `unclear` has
+no pass/fail to compare with, so those pairs get their own row and are left out of the disagreement
+counts unless you pass `--unclear pass` or `--unclear fail`. Unanswered pairs are left out too, and
+the report says how many. For a stratified sample it also gives each rate weighted by `sample_weight`,
+as an estimate for the whole judge file. `--list` prints every disagreement with the reviewer's
+justification. Several files can be given at once, for example one per reviewer.
+
 ## Publishing on GitHub Pages
 
 GitHub Pages serves this repository's `main` branch as it is. The raw JSONL is not committed (see
