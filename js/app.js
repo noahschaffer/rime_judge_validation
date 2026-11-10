@@ -67,7 +67,7 @@
     skipped: 0,
     annotations: {}, // source line index -> annotation
     current: 0,
-    blind: false,
+    blind: true,
     storageOk: true,
   };
 
@@ -925,7 +925,8 @@
   async function boot() {
     cacheEls();
     bindEvents();
-    state.blind = storage.get('blind') === '1';
+    // Judge verdicts start hidden, to avoid anchoring on them, unless this browser turned that off.
+    state.blind = storage.get('blind') !== '0';
     els.blind.checked = state.blind;
 
     const params = new URLSearchParams(location.search);

@@ -23,7 +23,9 @@ file on its own, so it asks you to choose it.
   are done and jumps to any of them.
 - Verdicts are saved in the browser as you go. Progress is kept per address, so the live site and
   localhost each keep their own.
-- **Hide judge until I answer** keeps each judge verdict hidden until you have chosen yours.
+- **Hide judge until I answer** is on by default: each judge verdict, with its explanation, stays hidden
+  until you have chosen your own verdict for that criterion. Turn it off to see them up front; the
+  browser remembers the choice.
 - **Sample** picks how the sample is drawn. *Random* takes 100 rows uniformly. *Stratified* groups rows
   by the judge's three verdicts and gives each combination an equal share, so cases the judge failed
   are well represented. The ⓘ button next to it shows how the sample compares with the whole file.
